@@ -544,7 +544,7 @@ static int32_t getRunFromLogicalIndex(UBiDi *pBiDi, int32_t logicalIndex) {
  * negative number of BiDi control characters within this run.
  */
 U_CFUNC UBool
-ubidi_getRuns(UBiDi *pBiDi, UErrorCode*) {
+ubidi_getRuns(UBiDi *pBiDi, UErrorCode* pErrorCode) {
     /*
      * This method returns immediately if the runs are already set. This
      * includes the case of length==0 (handled in setPara)..
@@ -575,6 +575,10 @@ ubidi_getRuns(UBiDi *pBiDi, UErrorCode*) {
          * levels[]!=paraLevel but we have to treat it like it were so.
          */
         limit=pBiDi->trailingWSStart;
+        if (limit <= 0) {
+            *pErrorCode = U_ILLEGAL_ARGUMENT_ERROR;
+            return false;
+        }
         /* count the runs, there is at least one non-WS run, and limit>0 */
         runCount=0;
         for(i=0; i<limit; ++i) {
